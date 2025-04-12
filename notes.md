@@ -1,4 +1,14 @@
 # Express js
+Express.js is a fast, minimal, and flexible web framework for Node.js that simplifies server-side development. It provides a set of powerful features for building web applications and APIs.
+
+In Node.js, when you create a module, the code inside that module is automatically wrapped in a function by Node.js itself. This function provides some useful local variables to every module, such as:
+
+```js
+(function(exports, require, module, __filename, __dirname) {
+    // Your module code is inside this function
+})();
+```
+
 
 initialise as a npm project 
 
@@ -29,8 +39,10 @@ nodemon /fileName
 ```
 
 # hello world
+require() is a built-in function used to import modules. It allows you to bring in external libraries.
+Loads a module and makes its functionality available in your code.
 
-```
+```js
 const express = require('express')
 const app = express()
 const port = 3000
@@ -48,15 +60,15 @@ app.listen(port, () => {
 
 To access public files, create a folder (public named folder is the standard) and list the files there then:-
 
-```
+```js
 app.use(express.static('public'))
 ```
 
 # Post req
 
-we can use the traditional way of testing our post reqs for testing api's by making an html page.
+we can use the traditional way of testing our post reqs for testing api's by making an html page or we can use postman.
 
-```
+```js
 app.post('/', (req,res)=>{
     res.send('<h1>Its a post req</h1>')
 })
@@ -70,23 +82,34 @@ app.post('/', (req,res)=>{
 </script>
 ```
 
-# res.sendFile
+# express.Router
 
-To send fies to the route like html templates etc:-
+Express.Router() is a mini Express application that allows you to create modular, mountable route handlers. It helps organize routes into separate files and makes large applications more manageable.
+different pages ke liye diffrent files mein code karo, makes code more manageble and readable.
 
-```
-app.get('/:slug', (req, res) => {
-    res.sendFile('/templates/index.html', { root: __dirname })
-})
-```
+```js
+// inside routes/userRoutes folder
 
-__dirname is a built-in Node.js variable that represents the absolute path of the directory containing the currently executing script.
+const express = require('express');
+const router = express.Router();
 
-If your main.js file is inside the projects folder, which itself is inside documents
-```
-console.log(__dirname);
-// C:\Users\YourName\Documents\Projects
+// Define routes within the router
+router.get('/', (req, res) => {
+    res.send('User List');
+});
 
-console.log(__filename);
-// C:\Users\YourName\Documents\Projects\main.js
+router.get('/:id', (req, res) => {
+    res.send(`User ID: ${req.params.id}`);
+});
+
+module.exports = router;
+
+
+
+// main.js
+const express = require('express');
+const app = express();
+const userRoutes = require('./routes/userRoutes'); // Import user routes
+
+app.use('/users', userRoutes); // users wale endpoint ko userRoutes folder handle karega
 ```
