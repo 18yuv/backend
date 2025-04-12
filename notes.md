@@ -70,3 +70,23 @@ app.post('/', (req,res)=>{
 </script>
 ```
 
+# res.sendFile
+
+To send fies to the route like html templates etc:-
+
+```
+app.get('/:slug', (req, res) => {
+    res.sendFile('/templates/index.html', { root: __dirname })
+})
+```
+
+__dirname is a built-in Node.js variable that represents the absolute path of the directory containing the currently executing script.
+
+If your main.js file is inside the projects folder, which itself is inside documents
+```
+console.log(__dirname);
+// C:\Users\YourName\Documents\Projects
+
+console.log(__filename);
+// C:\Users\YourName\Documents\Projects\main.js
+```

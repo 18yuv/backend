@@ -10,6 +10,7 @@ route parameters :- Defined using a : before a parameter name in the route.
 query parameters :- Passed as key-value pairs in the URL after a ?.
                     Extracted using req.query.
                     this is extra data in the url , /search?q=  
+                    queries (?) are used basically to share small data with the database for example ?mode=dark&region=in
 
 
 route :- A route defines a specific URL endpoint and the logic that executes when that endpoint is accessed, A route is a specific path in the server that defines what happens when a request is made to that path.
