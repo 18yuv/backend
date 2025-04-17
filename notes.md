@@ -1,4 +1,6 @@
 # Express js
+documentation for [Express js](https://expressjs.com/)
+
 Express.js is a fast, minimal, and flexible web framework for Node.js that simplifies server-side development. It provides a set of powerful features for building web applications and APIs.
 
 In Node.js, when you create a module, the code inside that module is automatically wrapped in a function by Node.js itself. This function provides some useful local variables to every module, such as:
@@ -37,6 +39,13 @@ now just type
 ```
 nodemon /fileName
 ```
+
+or you can use node also:-
+
+```
+node filename 
+```
+You have to restart the server again and again if you are using this.
 
 # hello world
 require() is a built-in function used to import modules. It allows you to bring in external libraries.

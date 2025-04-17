@@ -68,7 +68,7 @@ app.get('/end', (req, res) => {
 # res.json
 res.json() is an Express.js method used to send a JSON response to the client. It automatically sets the Content-Type header to application/json, making it the preferred way to return structured JSON data.
 res.json() helps send data from the server to the client.
-
+    
 ```
 app.get('/api/user', (req, res) => {
     res.json({ name: 'John Doe', age: 25, role: 'Admin' });
