@@ -132,3 +132,20 @@ app.route("/user")
        res.send("Deleting user...");
    });
 ```
+
+
+## codes :-
+
+200 - ok
+400 - bad request
+404 - not found
+500 - server error
+
+## content type :-
+any data that is being passed or recieved needs to be parsed, specifying the content type helps the client and the server to do that, faliure causes bugs.
+
+application/json
+text/html
+text/css
+application/javascript
+application/xml

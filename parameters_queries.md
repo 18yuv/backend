@@ -1,4 +1,3 @@
-
 # Parameter and Queries
 
 Parameters are values sent in the URL that allow dynamic routing and data handling.
@@ -16,7 +15,7 @@ query parameters :- Passed as key-value pairs in the URL after a ?.
 route :- A route defines a specific URL endpoint and the logic that executes when that endpoint is accessed, A route is a specific path in the server that defines what happens when a request is made to that path.
 
 
-```
+```js
 app.get('/', (req, res) => {
   res.send('<h1>Hello!</h1>')
 })
@@ -33,7 +32,7 @@ app.get('/yuvi', (req, res) => {
 
 A faster way to achieve these end points using express could be:-
 
-```
+```js
 app.get('/:page/:slug', (req, res) => {
     console.log(req.params); // consoles the params object
     console.log(req.query); // consoles the query object
