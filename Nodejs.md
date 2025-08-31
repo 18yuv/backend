@@ -68,6 +68,13 @@ tool like status code to set the code (ex 404)
 res.statusCode = 200;
 ```
 
+to write some code in one line like status code and header  
+```js
+res.writeHead(200, {'Content-Type': 'text/html'})
+```
+this is not used much because no modification can be done as it sends the headers immediately.
+
+
 # path parameter
 
 Path parameters are variables that are part of the URL path itself.
@@ -111,7 +118,7 @@ urlObj.pathname // to checks
 // JSON.parse() is a built-in JavaScript function that converts a JSON string into a JavaScript object (or array).
 ```
 
-# Cross Origin Resaourse Sharing (CORS)
+# Cross Origin Resourse Sharing (CORS)
 
 CORS (Cross-Origin Resource Sharing) is a security feature built into web browsers.
 
@@ -136,3 +143,27 @@ in, our sending response function we need to add:-
 res.setHeader('Access-Control-Allow-Origin', '*') // allow access from any origin 
 res.setHeader('Access-Control-Allow-Methods', 'GET') // if we need only get method (May Vary)
 ```
+
+
+# import.meta
+used to get the files metadata about the module, but only can be used in modular js, ex type = module
+
+# to get the current directery name 
+process.cwd()
+
+# paths
+
+absolute path :- An absolute path is the complete path to a file or directory in a file system, starting from the root directory (the top level of the system).
+ex-/home/user/Documents/report.txt
+
+relative path :- A relative path is a way to specify the location of a file or folder in relation to your current working directory (the folder you’re currently "in").
+ex-
+../Pictures/photo.jpg
+
+## path module
+```js
+import path from 'node:path'
+
+// path.join joins path into a safe string
+const abPath = path.join(import.meta.dirname, 'public', 'index.html') // this is an absolute path from root directory.
+const relPath = path.join('public', 'index.html') // realtive path
