@@ -167,3 +167,89 @@ import path from 'node:path'
 // path.join joins path into a safe string
 const abPath = path.join(import.meta.dirname, 'public', 'index.html') // this is an absolute path from root directory.
 const relPath = path.join('public', 'index.html') // realtive path
+```
+
+# FS module
+
+use to:-
+readfiles, createfiles(writeFile), updatefiles, deletefiles, renameFiles
+
+```js
+import fs from "node:fs"
+
+
+const content = fs.readFileSync(pathToResource, 'utf8') // avoid serving your files through this unless you want your code to be synchronus.
+
+
+// avoid using this method too as it can make the code more complex and could end in a callback hell
+fs.readFile(pathToResource, 'utf8', (err, content) => {
+if (err) {
+    console.log(err)
+    return
+}
+res.statusCode = 200
+res.setHeader('Content-Type', 'text/html')
+res.end(content)
+})
+```
+
+A better way to use fs module would be using fs promises (also supports async await)
+```js
+import fs from 'node:fs/promises'
+
+const content = await fs.readFile(pathToResource, 'utf8') // using encoding like utf8 is just optional but can interfere in serving images etc so not reccomended, but use setheader to interprete the serve files properly, ex(text/html)
+
+
+// an example sending response function
+export function sendResponse(res, statsuCode, conentType, payload) {
+
+  res.statusCode = statsuCode
+  res.setHeader('Content-Type', conentType)
+  res.end(payload)
+  }
+```
+
+# glabal variable
+```js
+// import http from 'node:http' (module not commonJS)
+const http = require('http')
+
+console.log(__dirname)
+console.log(__filename)
+```
+
+serve multiple files :-
+```js
+  const publicDir = path.join(__dirname, 'public')
+  const pathToResource = path.join(
+    publicDir, 
+    req.url === '/' ? 'index.html' : req.url)
+
+
+    const ext = path.extname(pathToResource) // to get the extentions like css because of the headers it only reads text/html not all types of extentions.
+
+
+
+
+    export function getContentType(ext) {
+   
+   const types = {
+     ".js": "text/javascript",
+     ".css": "text/css",
+     ".json": "application/json",
+     ".png": "image/png",
+     ".jpg": "image/jpeg",
+     ".jpeg": "image/jpeg",
+     ".gif": "image/gif",
+     ".svg": "image/svg+xml"
+   }
+
+  return types[ext.toLowerCase()] || "text/html"
+
+
+
+  // this way all the content types would be served
+  const contentType = getContentType(ext)
+  res.setHeader('Content-Type', contentType)
+}
+```
