@@ -338,3 +338,79 @@ export function sanitizeInput(data) {
 ```
 
 # Event 
+
+```js
+//syntax
+
+const argument = {
+  fullName: 'Meryl Sheep',
+  email: 'baah@thedevilwearswool.com',
+  phone: 12345678910
+}
+
+
+// import EventEmitter
+import { EventEmitter } from 'node:events'
+
+// create the emitter
+const emailRequestEmitter = new EventEmitter()
+// This is the object that can emit and listen to events.
+
+// define the listener function
+function listenerfunction(){}
+// This will run when the event fires.
+
+
+// register the listener
+emailRequestEmitter.on('emailRequest', "listenerfunction")
+//This says: “Whenever the event named 'emailRequest' happens, call listenerfunction.”
+
+
+// emit the event
+emailRequestEmitter.emit("emailRequest", "argument")
+// This triggers all listeners registered for 'emailRequest'.
+```
+
+# Server Sent Events (SSE)
+It’s a standard way for a server to push data to the browser over HTTP using a long-lived, one-way connection.
+
+Provide a constant stream of data to a client:-
+Breaking news
+Stock price tickers
+Sports scores
+Real-time monitoring
+
+Data flows only one way, so not suitable for:-
+Chat apps
+Doorbell cams
+
+```js
+res.statusCode = 200
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('Connection', 'keep-alive')
+
+
+// this will typically be in a interval
+res.write(
+        `data: ${JSON.stringify({ event: 'temp-updated', temp: temperature})}\n\n` // it signals an end of complete message prompt
+      )
+
+
+// index.js to update the data
+
+const eventSource = new EventSource('/temp/live')
+
+const tempDisplay = document.getElementById('temp-display')
+
+eventSource.onmessage = (event) => {
+  const data = JSON.parse(event.data)
+  const temperature = data.temp
+
+  tempDisplay.textContent = temperature
+}
+
+eventSource.onerror = () => {
+  console.log('Connection failed...')
+}
+```
