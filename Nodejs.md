@@ -8,7 +8,7 @@ and also contians dependencies that can be further installed easily.
 npm init
 ```
 
-change type in js to "type": "module
+change type in js to "type": "module"
 to run commands like import instead of reqiure
 
 
@@ -47,6 +47,7 @@ server.listen(PORT, ()=>{
 
 http is a text based protocol, all data transferred between the server and the client must be in string format.
 use json.stringify(dataToConvert)
+JSON.stringify(data, null, 2); // to prettify it
 
 # req object
 
@@ -74,6 +75,15 @@ res.writeHead(200, {'Content-Type': 'text/html'})
 ```
 this is not used much because no modification can be done as it sends the headers immediately.
 
+```js
+// an example sending response function
+export function sendResponse(res, statsuCode, conentType, payload) {
+
+  res.statusCode = statsuCode
+  res.setHeader('Content-Type', conentType)
+  res.end(payload)
+  }
+```
 
 # path parameter
 
@@ -174,6 +184,9 @@ const relPath = path.join('public', 'index.html') // realtive path
 use to:-
 readfiles, createfiles(writeFile), updatefiles, deletefiles, renameFiles
 
+
+## Read file
+
 ```js
 import fs from "node:fs"
 
@@ -198,18 +211,16 @@ A better way to use fs module would be using fs promises (also supports async aw
 import fs from 'node:fs/promises'
 
 const content = await fs.readFile(pathToResource, 'utf8') // using encoding like utf8 is just optional but can interfere in serving images etc so not reccomended, but use setheader to interprete the serve files properly, ex(text/html)
-
-
-// an example sending response function
-export function sendResponse(res, statsuCode, conentType, payload) {
-
-  res.statusCode = statsuCode
-  res.setHeader('Content-Type', conentType)
-  res.end(payload)
-  }
 ```
 
-# glabal variable
+## write file
+
+Use the writeFile method with the following:
+      - the relative path to the file 
+      - The data (what should we do to this data first?)
+      - The encoding 'utf8'
+
+# global variable
 ```js
 // import http from 'node:http' (module not commonJS)
 const http = require('http')
@@ -227,7 +238,6 @@ serve multiple files :-
 
 
     const ext = path.extname(pathToResource) // to get the extentions like css because of the headers it only reads text/html not all types of extentions.
-
 
 
 
@@ -253,3 +263,78 @@ serve multiple files :-
   res.setHeader('Content-Type', contentType)
 }
 ```
+
+# chunk
+When a server sends a response over HTTP, there are two main ways to specify its size:
+
+Fixed length: server sets Content-Length: 12345 and then sends exactly that many bytes.
+
+Chunked transfer encoding: server sets Transfer-Encoding: chunked and sends the body in pieces (chunks) without knowing the total length ahead of time.
+
+The second one is what people mean by a chunked response.
+The last chunk has size 0 to signal “done”.
+
+```js
+if (req.url === '/sub' && req.method === 'POST') {
+
+    let body = ''
+
+    for await (const chunk of req) { // we can loop over req directly without using something like req.body, as node has done all the work and gives us the chunks directly when we write this.
+      body += chunk
+    }
+  }
+```
+
+# sanitization 
+
+“Sanitization is removing anything suspicious from incoming input. In this case, we will be removing any tags from user-uploaded text.”
+“An XSS (Cross-Site Scripting) attack is a security vulnerability that allows an attacker to inject malicious scripts into web pages”
+
+install
+```
+npm install sanitize-html
+```
+
+(Only works on strings)
+
+import 
+```js
+import sanitizeHtml from 'sanitize-html';
+```
+
+Use Case
+```js
+// Example: user-submitted content
+const dirty = `<script>alert('xss');</script><p>Hello <b>world</b></p>`;
+
+// Clean it
+const clean = sanitizeHtml(dirty);
+
+console.log(clean);
+// => "<p>Hello <b>world</b></p>" // also clears styles etc 
+
+
+sanitizeHtml('h1: <h1>I am in an h1 tag</h1>',  {allowedTags: [], allowedAttributes: {}} ) // no allowed tags and attributes
+```
+
+sanitize data for a object :-
+```js
+import sanitizeHtml from 'sanitize-html' 
+
+export function sanitizeInput(data) {
+
+  const sanitizedData = {}
+
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === 'string') {
+      sanitizedData[key] = sanitizeHtml(value, { allowedTags: ['b'], allowedAttributes: {}})
+    } else {
+      sanitizedData[key] = value
+    }
+  }
+
+  return sanitizedData
+}
+```
+
+# Event 

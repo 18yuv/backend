@@ -140,6 +140,7 @@ app.route("/user")
 400 - bad request
 404 - not found
 500 - server error
+201 - resource accepted to the server 
 
 ## content type :-
 any data that is being passed or recieved needs to be parsed, specifying the content type helps the client and the server to do that, faliure causes bugs.
