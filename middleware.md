@@ -3,7 +3,10 @@
 Middleware functions are functions that have access to the request object (req), the response object (res), and the next function in the application’s request-response cycle which is used to call the next function.
 The next function is a function in the Express router which, when invoked, executes the middleware succeeding the current middleware.
 
-After a req is sent, there is no use of giving control to the next function because the request lifecycle has effectively concluded.
+The next() Function
+If your middleware does not send a response (no res.send(), res.end(), etc.), you must call next() so that the next middleware or route handler can process the request.
+
+If your middleware does send a response (e.g., res.json()), you shouldn’t call next() afterward, because the request lifecycle has already ended. Calling next() after sending a response can lead to errors like ERR_HTTP_HEADERS_SENT (headers already sent).
 
 ```js
 app.use('/', (req, res, next)=>{

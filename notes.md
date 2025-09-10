@@ -104,39 +104,39 @@ Express.Router() is a mini Express application that allows you to create modular
 different pages ke liye diffrent files mein code karo, makes code more manageble and readable.
 
 ```js
-    // userRoutes.js
-    const express = require('express');
-    const router = express.Router();
+// userRoutes.js
+import express from 'express';
+const router = express.Router();
 
-    // Define routes specific to this router
-    router.get('/', (req, res) => {
-        res.send('User home page');
-    });
+// Define routes specific to this router
+router.get('/', (req, res) => {
+    res.send('User home page');
+});
 
-    router.get('/profile', (req, res) => {
-        res.send('User profile page');
-    });
+router.get('/profile', (req, res) => {
+    res.send('User profile page');
+});
 
-    // Export the router
-    module.exports = router;
-
+export default router; // export the router
 
 
-    // app.js
-    const express = require('express');
-    const app = express();
-    const port = 3000;
-    const userRoutes = require('./userRoutes'); // Import the router
+// app.js
+import express from 'express';
+const app = express();
+const port = 3000;
+import router from './userRoutes.js';
 
-    // Use the router with a base path
-    app.use('/users', userRoutes); // users wale endpoint ko userRoutes folder handle karega
+// Use the router with a base path
+app.use('/users', router);
 
-    // Other routes or middleware for the main app
-    app.get('/', (req, res) => {
-        res.send('Main application home page');
-    });
+// Other routes or middleware for the main app
+app.get('/', (req, res) => {
+    res.send('Main application home page');
+});
 
-    app.listen(port, () => {console.log(`Server running on port ${port}`);});
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
 ```
 
 # CORS
@@ -162,3 +162,137 @@ app.use(cors(corsOptions)); // ⬅️ Pass the configuration to the middleware
 
 do i need to use cors at the very top?
 Generally, yes, you should place the CORS middleware at the very top of your Express.js application, right after your initial imports and app instantiation. This ensures that the CORS headers are set and checked for all incoming requests, regardless of the route they are trying to access.
+
+# SQLite
+SQLite is a relational database management system (RDBMS) that is different from other databases like MySQL or PostgreSQL because it's "serverless." Instead of a separate process running a server that your application connects to, the SQLite database is a C-language library that is embedded directly into your application. 
+
+SQLite3 - The database driver
+Opens a connection to the database file.
+Executes SQL queries.
+Handles reading and writing results.
+
+SQLite - a wrapper
+Provides async/await support for cleaner code.
+
+```js
+// create table .js
+import sqlite3 from 'sqlite3'
+import { open } from 'sqlite'
+import path from 'node:path'
+
+async function createTable() {
+
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  await db.exec(`
+  CREATE TABLE IF NOT EXISTS abductions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    location TEXT NOT NULL,
+    details TEXT NOT NULL
+  )
+  `)
+
+  await db.close()
+  console.log('Table abductions created')
+}
+
+createTable()
+
+
+// logtable.js
+import sqlite3 from 'sqlite3'
+import { open } from 'sqlite'
+import path from 'node:path'
+
+
+export async function viewAllProducts() {
+  const db = await open({
+    filename: path.join('database.db'), 
+    driver: sqlite3.Database
+  });
+
+  try {
+    const abductions = await db.all('SELECT * FROM abductions')
+    console.table(abductions) // consoles a table 
+  } catch (err) {
+    console.error('Error fetching products:', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+viewAllProducts()
+```
+
+some methods:
+
+db.exec : multiple statement at once and schema setup anf no return data for us
+```js
+await db.exec('
+    CREATE TABLE products (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        type TEXT NOT NULL,
+        size TEXT NOT NULL,
+    );
+``` 
+
+db.run :
+to run single statement , used for inserting, updating, deleting data, no return for us
+```js
+db.run(
+    'INSERT INTO users (name, email) VALUES (?, ?)',
+    [name, email]
+);
+```
+
+db.get: used when you expect one row back (or only the first row), lookup one row by its id 
+```js
+db.get('SELECT * FROM users WHERE id = ?', [id]) // returns the row to us
+```
+
+db.all: you want all matching rows form a table in the form of an array, use case like all out of stocks products, this also returns rows for use (in an array)
+```js
+db.all(
+    'SELECT * FROM products WHERE status = ?',
+    ['out_of_stock']
+)
+```
+
+## insertion in sqlite
+
+```js
+db.run(
+    'INSERT INTO users (name, email) VALUES (?, ?)',
+    [name, email]
+);
+```
+
+this line will run for each object when used in a loop for data in the database which would be slow, but we can do all of this in a single transaction by using exec:
+```js
+await db.exec('BEGIN TRANSACTION')
+
+    for (const {location, details} of abductionsData) {
+      await db.run(
+        `INSERT INTO abductions (location, details)
+        VALUES (?, ?)`,
+        [location, details]
+      )
+    }
+    
+    await db.exec('COMMIT') // will end the transaction
+```
+
+
+to handel error in the insertion process:
+```js
+await db.exec('ROLLBACK')
+
+// this ensures nothing is inserted if an error occurs, so basically everything is inserted or nothing is inserted.
+
+
+// remeber to close the database connection in the finally block
+```
