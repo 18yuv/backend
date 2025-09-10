@@ -65,6 +65,31 @@ app.listen(port, () => {
 })
 ```
 
+or change the type to be module and proceed :-
+
+```js
+import express from "express"
+
+const PORT = 8000
+
+const app = express()
+
+app.listen(PORT, ()=>{
+    console.log(`server connected on port ${PORT}`);
+})
+```
+
+run by typing npm start
+
+## for not hard coding a path 
+
+use : for not hard coding a path param :-
+```js
+/api/contry-name/:currency
+
+// this will let us access the currency that the user puts ex: btc, eth 
+```
+
 # express.static
 
 To access public files, create a folder (public named folder is the standard) and list the files there then:-

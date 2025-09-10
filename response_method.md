@@ -1,3 +1,6 @@
+http is text based protocol, all data transferred bwteen the client and the server must be in string format.
+
+
 # res.download
 res.download() is an Express.js method used to prompt the client (browser) to download a file. It sends a file as an attachment, meaning the user will get a download dialog instead of displaying the file in the browser.
 When you use res.download(), it forces the browser to download the file instead of displaying it in the browser.
