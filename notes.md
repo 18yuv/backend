@@ -98,52 +98,67 @@ To access public files, create a folder (public named folder is the standard) an
 app.use(express.static('public'))
 ```
 
-# Post req
-
-we can use the traditional way of testing our post reqs for testing api's by making an html page or we can use postman.
-
-```js
-app.post('/', (req,res)=>{
-    res.send('<h1>Its a post req</h1>')
-})
-
-<script>
-        (async function testPost() {
-            let a = await fetch("/", {method : "POST"});
-            let b = await a.text();
-            console.log(b);
-        })();
-</script>
-```
-
 # express.Router
 
 Express.Router() is a mini Express application that allows you to create modular, mountable route handlers. It helps organize routes into separate files and makes large applications more manageable.
 different pages ke liye diffrent files mein code karo, makes code more manageble and readable.
 
 ```js
-// inside routes/userRoutes folder
+    // userRoutes.js
+    const express = require('express');
+    const router = express.Router();
 
-const express = require('express');
-const router = express.Router();
+    // Define routes specific to this router
+    router.get('/', (req, res) => {
+        res.send('User home page');
+    });
 
-// Define routes within the router
-router.get('/', (req, res) => {
-    res.send('User List');
-});
+    router.get('/profile', (req, res) => {
+        res.send('User profile page');
+    });
 
-router.get('/:id', (req, res) => {
-    res.send(`User ID: ${req.params.id}`);
-});
-
-module.exports = router;
+    // Export the router
+    module.exports = router;
 
 
 
-// main.js
-const express = require('express');
-const app = express();
-const userRoutes = require('./routes/userRoutes'); // Import user routes
+    // app.js
+    const express = require('express');
+    const app = express();
+    const port = 3000;
+    const userRoutes = require('./userRoutes'); // Import the router
 
-app.use('/users', userRoutes); // users wale endpoint ko userRoutes folder handle karega
+    // Use the router with a base path
+    app.use('/users', userRoutes); // users wale endpoint ko userRoutes folder handle karega
+
+    // Other routes or middleware for the main app
+    app.get('/', (req, res) => {
+        res.send('Main application home page');
+    });
+
+    app.listen(port, () => {console.log(`Server running on port ${port}`);});
 ```
+
+# CORS
+
+to make your api open to public you need to allow cross origin resource sharing, which is pretty easy to deal with in express:
+```
+nnpm install cors
+```
+
+```js
+import cors from 'cors'
+app.use(cors()) // apply at the top to allow everyone to access to all the routes 
+```
+
+to let people access only for a trusted domain :
+```js
+const corsOptions = {
+  origin: 'https://www.my-frontend-app.com' // ⬅️ Only this origin is allowed
+};
+
+app.use(cors(corsOptions)); // ⬅️ Pass the configuration to the middleware
+```
+
+do i need to use cors at the very top?
+Generally, yes, you should place the CORS middleware at the very top of your Express.js application, right after your initial imports and app instantiation. This ensures that the CORS headers are set and checked for all incoming requests, regardless of the route they are trying to access.
