@@ -141,7 +141,7 @@ app.listen(port, () => {
 
 # CORS
 
-to make your api open to public you need to allow cross origin resource sharing, which is pretty easy to deal with in express:
+To make your api open to public you need to allow cross origin resource sharing, which is pretty easy to deal with in express:
 ```
 nnpm install cors
 ```
