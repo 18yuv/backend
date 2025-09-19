@@ -319,3 +319,64 @@ we can use the last id attribute that is given to us by sqlite 3 to bind the log
 
   req.session.userId = result.lastID
 ```
+
+# logout
+
+```js
+export async function logoutUser(req, res) {
+
+  req.session.destroy( () => {
+
+    res.json({ message: 'Logged out' })
+
+  })
+
+}
+```
+
+# Protect Routes
+
+```js
+
+// requireAuth.js
+export function requireAuth(req, res, next) {
+
+  if (!req.session.userId) {
+
+    console.log('Access to protected route blocked')
+    return res.status(401).json({ error: 'Unauthorized' })
+
+  }
+  next()
+}
+
+
+// import and use it as midleware on any route that you may want to protect
+
+// cart.js
+cartRouter.post('/add', requireAuth, addToCart) 
+cartRouter.get('/cart-count', requireAuth, getCartCount)
+cartRouter.get('/', requireAuth, getAll) 
+cartRouter.delete('/all', requireAuth, deleteAll) 
+cartRouter.delete('/:itemId', requireAuthdeleteItem) 
+
+
+
+// additional logic that checks and redirects the user if not logged in
+
+  if (!res.ok) {
+    window.location.href = '/'
+    checkoutBtn.disabled = true
+    checkoutBtn.classList.add('disabled')
+    userMessage.innerHTML = 'Please <a href="login.html">log in</a>.'
+    return []
+  }
+
+// if (!res.ok): This is the main condition. The res object likely represents a response from an API call (e.g., using fetch). The ok property is a boolean that is true if the HTTP response status code is in the range 200-299, and false otherwise
+
+// window.location.href = '/': This line redirects the user to the root URL of the website.
+
+//checkoutBtn.disabled = true: This line disables a button element with the ID checkoutBtn, preventing the user from clicking it again.
+
+
+```
