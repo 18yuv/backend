@@ -372,7 +372,8 @@ cartRouter.delete('/:itemId', requireAuthdeleteItem)
     return []
   }
 
-// if (!res.ok): This is the main condition. The res object likely represents a response from an API call (e.g., using fetch). The ok property is a boolean that is true if the HTTP response status code is in the range 200-299, and false otherwise
+// if (!res.ok): This is the main condition. The res object likely represents a response from an API call (e.g., using fetch). 
+//The ok property is a boolean that is true if the HTTP response status code is in the range 200-299, and false otherwise
 
 // window.location.href = '/': This line redirects the user to the root URL of the website.
 
