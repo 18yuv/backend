@@ -380,4 +380,5 @@ cartRouter.delete('/:itemId', requireAuthdeleteItem)
 //checkoutBtn.disabled = true: This line disables a button element with the ID checkoutBtn, preventing the user from clicking it again.
 
 
+
 ```
