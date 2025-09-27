@@ -1,6 +1,11 @@
+We need to validate our data at the backend efficiently as the frinitend validation can easily be overridden by a malicious actor.
+
 # app.use(express.json())
-to get the data correctly
+to get the data correctly and use it in our functions
 express.json() is built-in middleware (since Express 4.16). It parses incoming requests with Content-Type: application/json and populates req.body with the parsed JSON object.
+
+JSON.parse → turn a JSON string into a JS value.
+express.json() → middleware that automatically runs JSON.parse on request bodies so you can access req.body as a JS object.
 
 ```js
 const express = require('express');
@@ -37,12 +42,12 @@ const newUser = {
     password: 'Gladiators!'
 }
 
-console.log(validator.isEmail(newUser.email)) // true
+console.log(validator.isEmail(newUser.email)) // true (valid format email)
 ```
 
 # validation 
 
-We will test if thee validation is good at the backend first not the frontend so that our app is more secure
+We will test if thee validation is good at the backend first not the frontend so that our app is more secure.
 
 some tasks of validation:
 ```js
@@ -87,13 +92,14 @@ export async function registerUser(req, res) {
     id="signup-username" 
     name="username"
     pattern="^[a-zA-Z0-9_-]{1,20}$" 
-    title="Username must be 1–20 characters and can only include letters, numbers, underscores (_), orhyphens (-)."
+    title="Username must be 1–20 characters and can only include letters, numbers, underscores (_), or hyphens (-)."
     required
 />
 ```
 
 
 ## database validation 
+we will be checking if the user already exits the email is already in use at the backend side not the databse as that way the error handling would be easier to manage and not be messy.
 
 some tasks:-
 ```js
@@ -113,7 +119,6 @@ const dbPath = path.join('database.db')
 
 
 // auth.js
-
 
 import { getDBConnection } from '../db/db.js'
 
@@ -209,6 +214,9 @@ If they match, user is signed in. If not, sign in fails.
 
 ```js
 const hashedPassword = await bcrypt.hash(password, costFactor);
+
+
+const userIsValid = await bcrypt.compare(loginAttempt.password, userInDb.password) // boolean
 ```
 
 The cost factor (also called work factor) in bcrypt controls how computationally expensive the hashing is.
