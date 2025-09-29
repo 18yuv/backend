@@ -353,6 +353,5 @@ export async function deleteAll(req, res) {
 Challenge:
 1. Delete all cart items for a user.
 */
-
 }
 ```
