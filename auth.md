@@ -328,9 +328,33 @@ we can use the last id attribute that is given to us by sqlite 3 to bind the log
   req.session.userId = result.lastID
 ```
 
-## me controller
+## Me route
+if we setup a route let's say me which works for telling us if the user has logged in and if it has then return it's name for us so that we can display a welcome message.
+but now we have to be careful with the order in which we handle our routes as if we do:-
+```js
+app.use('/api/products', productsRouter)
+app.use('/api/auth', authRouter)
+app.use('/api/auth/me', meRouter)
+
+// A mount like app.use('/api/auth', authRouter) will handle any path that starts with /api/auth, including /api/auth/me, unless you explicitly avoid handling /me inside authRouter.
+// If authRouter has a route like router.get('/me', …) inside it, it will already handle /api/auth/me.
+// Because Express won’t “skip” a matched route, your meRouter might never be reached if authRouter matches first.
+```
+
+If we want /api/auth/me always handled by meRouter,we have to mount it before authRouter:
+```js
+app.use('/api/products', productsRouter)
+
+// put meRouter first so it wins for /api/auth/me
+app.use('/api/auth/me', meRouter)
+
+app.use('/api/auth', authRouter)
+
+```
 
 ```js
+// me controller
+
 export async function getCurrentUser(req, res) {
   try {
     const db = await getDBConnection()
@@ -360,7 +384,134 @@ Challenge:
 } 
 ```
 
+# login 
+proper login process with the suitable code:
+
+```js
+import validator from 'validator'
+import { getDBConnection } from '../db/db.js'
+import bcrypt from 'bcryptjs'
+
+export async function registerUser(req, res) {
+
+  let { name, email, username, password } = req.body
+
+  if (!name || !email || !username || !password) {
+
+    return res.status(400).json({ error: 'All fields are required.' })
+
+  }
+
+  name = name.trim()
+  email = email.trim()
+  username = username.trim()
+
+  if (!/^[a-zA-Z0-9_-]{1,20}$/.test(username)) {
+
+    return res.status(400).json(
+      { error: 'Username must be 1–20 characters, using letters, numbers, _ or -.' }
+    )
+  }
+
+  if (!validator.isEmail(email)) {
+
+    return res.status(400).json({ error: 'Invalid email format' })
+
+  }
+
+  try {
+
+    const db = await getDBConnection()
+
+    const existing = await db.get('SELECT id FROM users WHERE email = ? OR username = ?', [email, username])
+
+    if (existing) {
+      return res.status(400).json({ error: 'Email or username already in use.' })
+    }
+
+    const hashed = await bcrypt.hash(password, 10)
+
+    const result = await db.run('INSERT INTO users (name, email, username, password) VALUES (?, ?, ?, ?)', [name, email, username, hashed])
+    console.log(result)
+
+    req.session.userId = result.lastID
+
+    res.status(201).json({ message: 'User registered' })
+  } catch (err) {
+
+    console.error('Registration error:', err.message);
+    res.status(500).json({ error: 'Registration failed. Please try again.' })
+
+  }
+
+}
+
+export async function loginUser(req, res) {
+
+  let { username, password } = req.body
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'All fields are required' } )
+  }
+
+  username = username.trim()
+/*
+Challenge:
+
+ 1. If the user's login details are incomplete, end the response with this JSON and a suitable code:
+    { error: 'All fields are required' } 
+
+ 2. If the user's login details are invalid, end the response with this JSON and a suitable code:
+    { error: 'Invalid credentials'}. This could be because the user does not exist OR because the password does not match the username.
+
+ 3. If the user’s login details are valid, create a session for the user and end the response with this JSON:
+    { message: 'Logged in' }
+
+Look at .registerUser() above. Is there anything else you need to do?
+
+Important: lastID is not available to us here, so how can we get the user’s ID to attach it to the session?
+
+You can test it by signing in with the following:
+username: test
+password: test
+
+hint.md for help.
+*/
+
+
+  try {
+    const db = await getDBConnection()
+
+    const user = await db.get('SELECT * FROM users WHERE username = ?', [username])
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials'})
+    }
+
+    const isValid = await bcrypt.compare(password, user.password)
+
+    if (!isValid) {
+
+      return res.status(401).json({ error: 'Invalid credentials'})
+
+    }
+
+    req.session.userId = user.id
+    res.json({ message: 'Logged in' })
+
+
+  } catch (err) {
+    console.error('Login error:', err.message)
+    res.status(500).json({ error: 'Login failed. Please try again.' })
+  }
+}
+
+
+
+```
+
 # logout
+proper login process with the suitable code:
 
 ```js
 export async function logoutUser(req, res) {
@@ -418,7 +569,4 @@ cartRouter.delete('/:itemId', requireAuthdeleteItem)
 // window.location.href = '/': This line redirects the user to the root URL of the website.
 
 //checkoutBtn.disabled = true: This line disables a button element with the ID checkoutBtn, preventing the user from clicking it again.
-
-
-
 ```

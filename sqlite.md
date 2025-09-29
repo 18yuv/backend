@@ -9,6 +9,8 @@ Handles reading and writing results.
 SQLite - a wrapper
 Provides async/await support for cleaner code.
 
+## Create table
+
 ```js
 // create table .js
 import sqlite3 from 'sqlite3'
@@ -35,8 +37,11 @@ async function createTable() {
 }
 
 createTable()
+```
 
+## Log table
 
+```js
 // logtable.js
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
