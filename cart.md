@@ -349,6 +349,7 @@ export async function deleteAll(req, res) {
 
   res.status(204).send()
 
+
 /*
 Challenge:
 1. Delete all cart items for a user.
