@@ -26,6 +26,8 @@ app.post('/data', (req, res) => {
 Without app.use(express.json()), req.body would be undefined for JSON payloads unless you use another body parser.
 
 # validator package
+(alternative use joi, effective and easier to implement, largly used)
+
 to validate fields like email etc
 
 ```
@@ -293,6 +295,7 @@ PostgreSQL/MySQL: Relational databases can also be used, but they are generally 
 MongoDB: A document database that works well for storing session data, especially if you're already using it for your application's data.
 
 # Express-session
+(jwt token alternative widely used)
 by default, express-session uses an in-memory session store called MemoryStore. This means that all session data is stored in the RAM of the server process.
 
 
