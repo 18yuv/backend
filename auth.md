@@ -38,6 +38,7 @@ to validate fields like email etc
 npm install validator
 ```
 
+
 ```js
 import validator from 'validator'
 
