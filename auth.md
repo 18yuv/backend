@@ -1,4 +1,4 @@
-We need to validate our data at the backend efficiently as the frinitend validation can easily be overridden by a malicious actor.
+We need to validate our data at the backend efficiently as the frontend validation can easily be overridden by a malicious actor.
 
 # app.use(express.json())
 to get the data correctly and use it in our functions
@@ -16,6 +16,10 @@ app.use(express.json()); // <-- here
 // This means:
 //Any incoming request with a JSON body will automatically be parsed.
 //Instead of manually parsing req yourself, you can directly access req.body:
+
+
+// Parse URL-encoded requests (like form submissions)
+app.use(express.urlencoded({ extended: true }));
 
 
 app.post('/data', (req, res) => {
