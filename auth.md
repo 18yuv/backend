@@ -343,6 +343,9 @@ const token = jwt.sign(
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
+
+
+  // use cookies to store the token, access by using cookie-parser
 ```
 
 by default, express-session uses an in-memory session store called MemoryStore. This means that all session data is stored in the RAM of the server process.
