@@ -32,6 +32,25 @@ Without app.use(express.json()), req.body would be undefined for JSON payloads u
 # validator package
 (alternative use joi, effective and easier to implement, largly used)
 
+```js
+    let { name, email, password } = req.body
+
+    if (!name || !email || !password) {
+        return res.status(400).json({ message: 'All fields are required.' })
+    }
+
+    const JoiSchema = Joi.object({
+        name: Joi.string().max(100).required(),
+        email: Joi.string().trim().email().required(),
+        password: Joi.string().min(6).required()
+    })
+    const { error } = JoiSchema.validate(req.body)
+
+    if (error) {
+        return res.status(400).json({ message: "Bad Request", error })
+    }
+```
+
 to validate fields like email etc
 
 ```
@@ -301,6 +320,31 @@ MongoDB: A document database that works well for storing session data, especiall
 
 # Express-session
 (jwt token alternative widely used)
+mongo db already provides a id to the data added and it can be used directly to integrate with the jwt token.
+
+```js
+jwt.sign(payload, secret, option, callback)
+
+// example 
+
+const payload = {
+    user: { id: user.id }
+};
+
+jwt.sign(payload, config.jwtSecret, { expiresIn: 3600 },
+(err, token) => {
+    if (err) throw err;
+    res.json({ token });
+});
+
+// another example 
+const token = jwt.sign(
+  { id: user._id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
+```
+
 by default, express-session uses an in-memory session store called MemoryStore. This means that all session data is stored in the RAM of the server process.
 
 
