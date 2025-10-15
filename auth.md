@@ -625,3 +625,26 @@ cartRouter.delete('/:itemId', requireAuthdeleteItem)
 
 //checkoutBtn.disabled = true: This line disables a button element with the ID checkoutBtn, preventing the user from clicking it again.
 ```
+
+
+## extra layer of security
+
+```js
+// for input sanitization and prevent mongo db injections
+
+npm i express-mongo-sanitize
+import mongoSanitize from 'express-mongo-sanitize';
+
+app.use(mongoSanitize());
+
+
+
+// dont send errors to users, instead log the errors for yourself
+
+
+// helmet for security of headers
+import helmet from 'helmet';
+app.use(helmet());
+
+
+// can use logging libraries like morgan or winston
