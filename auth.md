@@ -504,7 +504,6 @@ export async function registerUser(req, res) {
 export async function loginUser(req, res) {
 
   let { username, password } = req.body
-  
 
   if (!username || !password) {
     return res.status(400).json({ error: 'All fields are required' } )
