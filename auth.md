@@ -72,7 +72,6 @@ console.log(validator.isEmail(newUser.email)) // true (valid format email)
 ```
 
 # validation 
-
 We will test if thee validation is good at the backend first not the frontend so that our app is more secure.
 
 some tasks of validation:
