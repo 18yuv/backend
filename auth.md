@@ -33,6 +33,7 @@ Without app.use(express.json()), req.body would be undefined for JSON payloads u
 (alternative use joi, effective and easier to implement, largly used)
 can use validator as well
 
+
 ```js
     let { name, email, password } = req.body
 
